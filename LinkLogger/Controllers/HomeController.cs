@@ -1,16 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using LinkLogger.DataAccess;
 
 namespace LinkLogger.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        public async Task<ViewResult> Index()
         {
-            return View();
+            Link[] links;
+            using (var ctx = new LinkLoggerContext())
+            {
+                links = await ctx.Links.OrderByDescending(l => l.RegisteredAt).Take(20).ToArrayAsync();
+            }
+
+            return View(links);
         }
 
         public ActionResult About()
@@ -20,11 +29,15 @@ namespace LinkLogger.Controllers
             return View();
         }
 
-        public ActionResult Contact()
+        public async Task<ActionResult> Links()
         {
-            ViewBag.Message = "Your contact page.";
+            Link[] links;
+            using (var ctx = new LinkLoggerContext())
+            {
+                links = await ctx.Links.OrderByDescending(l => l.RegisteredAt).Take(20).ToArrayAsync();
+            }
 
-            return View();
+            return View(links);
         }
     }
 }
