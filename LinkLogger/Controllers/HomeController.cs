@@ -28,16 +28,5 @@ namespace LinkLogger.Controllers
 
             return View();
         }
-
-        public async Task<ActionResult> Links()
-        {
-            Link[] links;
-            using (var ctx = new LinkLoggerContext())
-            {
-                links = await ctx.Links.OrderByDescending(l => l.RegisteredAt).Take(20).ToArrayAsync();
-            }
-
-            return View(links);
-        }
     }
 }
