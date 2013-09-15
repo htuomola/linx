@@ -14,7 +14,7 @@ namespace LinkLogger.Controllers.Api
 {
     public class LinksController : ApiController
     {
-        public async Task<LinkModel> Get(int id)
+        public async Task<LinkModel> GetLink(int id)
         {
             using (var context = new LinkLoggerContext())
             {
@@ -23,7 +23,7 @@ namespace LinkLogger.Controllers.Api
             }
         }
 
-        public async Task<IEnumerable<LinkModel>> Get()
+        public async Task<IEnumerable<LinkModel>> GetLinks()
         {
             using (var context = new LinkLoggerContext())
             {
@@ -32,7 +32,7 @@ namespace LinkLogger.Controllers.Api
             }
         }
 
-        public async Task<string> Post(LinkModel request)
+        public async Task<string> PostLink(LinkModel request)
         {
             if (!ModelState.IsValid)
             {
