@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LinkLogger.Controllers.Api
+namespace LinkLogger.Models
 {
     public class LinkModel
     {

@@ -8,6 +8,7 @@ using System.Web.Http.Controllers;
 using System.Web.Http.Hosting;
 using System.Web.Http.Routing;
 using LinkLogger.DataAccess;
+using LinkLogger.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LinkLogger.Controllers.Api.Tests

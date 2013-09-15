@@ -143,31 +143,16 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Api\ApiControllerWithHub.cs" />
-    <Compile Include="Controllers\Api\LinkModel.cs" />
     <Compile Include="Controllers\Api\LinksController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="DataAccess\Link.cs">
-      <DependentUpon>LinkLoggerModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataAccess\LinkLoggerModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LinkLoggerModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataAccess\LinkLoggerModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LinkLoggerModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataAccess\LinkLoggerModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LinkLoggerModel.edmx</DependentUpon>
-    </Compile>
+    <Compile Include="DataAccess\Link.cs" />
+    <Compile Include="DataAccess\LinkLoggerContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\LinkHub.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\LinkModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -175,7 +160,6 @@
     <Content Include="Content\bootstrap-responsive.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="DataAccess\LinkLoggerModel.edmx.sql" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -184,23 +168,6 @@
     <Content Include="Scripts\App\app.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <EntityDeploy Include="DataAccess\LinkLoggerModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>LinkLoggerModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="DataAccess\LinkLoggerModel.edmx.diagram">
-      <DependentUpon>LinkLoggerModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="DataAccess\LinkLoggerModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>LinkLoggerModel.Context.cs</LastGenOutput>
-      <DependentUpon>LinkLoggerModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="DataAccess\LinkLoggerModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>LinkLoggerModel.cs</LastGenOutput>
-      <DependentUpon>LinkLoggerModel.edmx</DependentUpon>
-    </Content>
     <None Include="Properties\PublishProfiles\linkit - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\linkit - Web Deploy.pubxml" />
     <Content Include="Scripts\App\_run.js" />
@@ -229,7 +196,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

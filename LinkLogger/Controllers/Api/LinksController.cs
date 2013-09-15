@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using LinkLogger.DataAccess;
 using LinkLogger.Hubs;
+using LinkLogger.Models;
 
 namespace LinkLogger.Controllers.Api
 {
