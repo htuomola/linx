@@ -21,7 +21,10 @@ function AppViewModel(dataModel) {
     
     self.links = ko.observableArray();
 
-    self.init = function() {
+    self.loadingLinks = ko.observable(false);
+
+    self.init = function () {
+        self.loadingLinks(true);
         dataModel.getLinks()
             .done(function(data) {
                 if (typeof (data) === "object") {
@@ -32,9 +35,11 @@ function AppViewModel(dataModel) {
                     //self.errors.push("An unknown error occurred.");
                     // TODO: notify error
                 }
+                self.loadingLinks(false);
             })
             .fail(function() {
                 // TODO: notify error
+                self.loadingLinks(false);
             });
     };
 
