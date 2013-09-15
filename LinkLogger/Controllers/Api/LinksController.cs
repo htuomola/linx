@@ -32,7 +32,7 @@ namespace LinkLogger.Controllers.Api
             }
         }
 
-        public async Task<string> PostLink(LinkModel request)
+        public async Task<string> PostLink(LinkModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -49,13 +49,7 @@ namespace LinkLogger.Controllers.Api
 
             using (var context = new LinkLoggerContext())
             {
-                var link = new Link
-                           {
-                               Channel = request.Channel,
-                               RegisteredAt = DateTime.Now,
-                               Sender = request.User,
-                               Url = request.Url
-                           };
+                var link = MapLinkModelToLink(model);
                 context.Links.Add(link);
                 int rowsAdded = await context.SaveChangesAsync();
                 // TODO: log
@@ -67,6 +61,18 @@ namespace LinkLogger.Controllers.Api
             }
         }
 
+        private static Link MapLinkModelToLink(LinkModel model)
+        {
+            return new Link
+                   {
+                       Channel = model.Channel,
+                       RegisteredAt = DateTime.Now,
+                       User = model.User,
+                       Url = model.Url,
+                       Title = model.Title
+                   };
+        }
+
         private static LinkModel MapLinkToLinkModel(Link arg)
         {
             return new LinkModel()
@@ -74,8 +80,9 @@ namespace LinkLogger.Controllers.Api
                        Channel = arg.Channel,
                        Id = arg.Id,
                        PostedAt = arg.RegisteredAt,
-                       User = arg.Sender,
-                       Url = arg.Url
+                       User = arg.User,
+                       Url = arg.Url,
+                       Title = arg.Title
                    };
         }
     }

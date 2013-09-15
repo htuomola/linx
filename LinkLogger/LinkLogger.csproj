@@ -151,6 +151,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\LinkHub.cs" />
+    <Compile Include="Migrations\201309151417059_TitleAddedEtc.cs" />
+    <Compile Include="Migrations\201309151417059_TitleAddedEtc.Designer.cs">
+      <DependentUpon>201309151417059_TitleAddedEtc.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\LinkModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -202,6 +206,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201309151417059_TitleAddedEtc.resx">
+      <DependentUpon>201309151417059_TitleAddedEtc.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

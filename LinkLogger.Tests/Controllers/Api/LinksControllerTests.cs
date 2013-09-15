@@ -33,12 +33,11 @@ namespace LinkLogger.Controllers.Api.Tests
         {
             var config = new HttpConfiguration();
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, "http://localhost/api/links");
-            //WebApiConfig.Register(config);
             var route = config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}");
             var routeData = new HttpRouteData(route, new HttpRouteValueDictionary { { "controller", "links" } });
+            
             var controller = new LinksController();
             controller.ControllerContext = new HttpControllerContext(config, routeData, httpRequest);
-            //controller.Request = request;
             controller.Request.Properties[HttpPropertyKeys.HttpConfigurationKey] = config;
 
             var request = new LinkModel()
@@ -50,24 +49,6 @@ namespace LinkLogger.Controllers.Api.Tests
             string response = await controller.PostLink(request);
             Assert.IsNotNull(response);
             Assert.IsTrue(Uri.IsWellFormedUriString(response, UriKind.Absolute));
-            //var str = await responseMsg.Content.ReadAsStringAsync();
-            
-            //var response = await responseMsg.Content.ReadAsAsync<LinkModel>();
-
-            //Link link;
-            //using (var ctx = new LinkLoggerContext())
-            //{
-            //    link = await ctx.Links.SingleAsync();
-            //}
-
-            //Assert.AreEqual(request.Url, link.Url);
-            //Assert.AreEqual(request.User, link.Sender);
-            //Assert.AreEqual(request.Channel, link.Channel);
-            //Assert.IsTrue(link.RegisteredAt >= DateTime.Now.AddSeconds(-10));
-
-            //Assert.AreEqual(response.Id, link.Id);
-
-            //Assert.IsTrue(response.Id > 0);
         }
 
         [TestMethod()]
@@ -85,7 +66,7 @@ namespace LinkLogger.Controllers.Api.Tests
                            {
                                Channel = "#foobar",
                                Url = "http://www.sample.invalid",
-                               Sender = "Tom",
+                               User = "Tom",
                                RegisteredAt = DateTime.Now
                            };
 
@@ -105,7 +86,7 @@ namespace LinkLogger.Controllers.Api.Tests
             Assert.AreEqual(expected.Channel, link.Channel);
             // dates are not totally equal due to SQL storage
             Assert.IsTrue((expected.RegisteredAt - link.PostedAt).Value.TotalSeconds < 1);
-            Assert.AreEqual(expected.Sender, link.User);
+            Assert.AreEqual(expected.User, link.User);
             Assert.AreEqual(expected.Id, link.Id);
             Assert.AreEqual(expected.Url, link.Url);
         }

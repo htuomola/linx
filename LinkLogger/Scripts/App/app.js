@@ -10,10 +10,12 @@ function LinkViewModel(app, model) {
     var self = this;
 
     self.url = model.Url;
+    self.urlText = model.Url.substring(0, 20) + '...';
     self.postedAt = model.PostedAt;
     self.channel = model.Channel;
     self.user = model.User;
     self.id = model.Id;
+    self.title = model.Title;
 }
 
 function AppViewModel(dataModel) {
