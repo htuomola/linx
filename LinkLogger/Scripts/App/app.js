@@ -4,8 +4,19 @@
 
     //self.links = ko.observableArray(mockData);
     self.getLinks = function() {
-        return mockData;
+        return $.ajax("/api/links");
+        //return mockData;
     };
+}
+
+function LinkViewModel(app, model) {
+    var self = this;
+
+    self.url = model.Url;
+    self.postedAt = model.PostedAt;
+    self.channel = model.Channel;
+    self.user = model.User;
+    self.id = model.Id;
 }
 
 function AppViewModel(dataModel) {
@@ -15,7 +26,20 @@ function AppViewModel(dataModel) {
     self.links = ko.observableArray();
 
     self.init = function() {
-        self.links(dataModel.getLinks());
+        dataModel.getLinks()
+            .done(function(data) {
+                if (typeof (data) === "object") {
+                    for (var i = 0; i < data.length; i++) {
+                        self.links.push(new LinkViewModel(app, data[i]));
+                        //self.externalLoginProviders.push(new ExternalLoginProviderViewModel(app, data[i]));
+                    }
+                } else {
+                    //self.errors.push("An unknown error occurred.");
+                }
+            })
+            .fail(function() {
+
+            });
     };
 }
 
