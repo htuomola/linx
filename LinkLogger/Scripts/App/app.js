@@ -10,9 +10,13 @@
 
 function AppViewModel(dataModel) {
     var self = this;
-    var mockData = ["alpha", "beta"];
+    //var mockData = ["alpha", "beta"];
 
-    self.links = ko.observableArray(mockData);
+    self.links = ko.observableArray();
+
+    self.init = function() {
+        self.links(dataModel.getLinks());
+    };
 }
 
 var app = new AppViewModel(new AppDataModel());
