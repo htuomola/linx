@@ -142,6 +142,8 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\Api\ApiControllerWithHub.cs" />
+    <Compile Include="Controllers\Api\LinkModel.cs" />
     <Compile Include="Controllers\Api\LinksController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DataAccess\Link.cs">

@@ -1,11 +1,8 @@
 ﻿function AppDataModel() {
     var self = this;
-    var mockData = ["alpha", "beta"];
-
-    //self.links = ko.observableArray(mockData);
+    
     self.getLinks = function() {
         return $.ajax("/api/links");
-        //return mockData;
     };
 }
 
@@ -21,8 +18,7 @@ function LinkViewModel(app, model) {
 
 function AppViewModel(dataModel) {
     var self = this;
-    //var mockData = ["alpha", "beta"];
-
+    
     self.links = ko.observableArray();
 
     self.init = function() {
@@ -31,16 +27,38 @@ function AppViewModel(dataModel) {
                 if (typeof (data) === "object") {
                     for (var i = 0; i < data.length; i++) {
                         self.links.push(new LinkViewModel(app, data[i]));
-                        //self.externalLoginProviders.push(new ExternalLoginProviderViewModel(app, data[i]));
                     }
                 } else {
                     //self.errors.push("An unknown error occurred.");
+                    // TODO: notify error
                 }
             })
             .fail(function() {
-
+                // TODO: notify error
             });
+    };
+
+    self.linkAdded = function(link) {
+        var vm = new LinkViewModel(app, link);
+        self.links.unshift(vm);
     };
 }
 
 var app = new AppViewModel(new AppDataModel());
+
+$(function () {
+    // Reference the auto-generated proxy for the hub.
+    var linkHub = $.connection.linkHub;
+    // Create a function that the hub can call back for notifying of new links.
+    linkHub.client.addNewLink = function(link) {
+        app.linkAdded(link);
+    };
+
+    // Start the connection.
+    $.connection.hub.start().done(function () {
+        // Initialize client->server event handlers here
+        // i.e.
+        // Call the Send method on the hub.
+        // linkHub.server.send('foobar');
+    });
+});

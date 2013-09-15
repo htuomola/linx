@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using LinkLogger.Controllers.Api;
+using Microsoft.AspNet.SignalR;
 
 namespace LinkLogger.Hubs
 {

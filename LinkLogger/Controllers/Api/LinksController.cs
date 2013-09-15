@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -8,11 +7,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using LinkLogger.DataAccess;
-using Microsoft.Ajax.Utilities;
+using LinkLogger.Hubs;
 
 namespace LinkLogger.Controllers.Api
 {
-    public class LinksController : ApiController
+    public class LinksController : ApiControllerWithHub<LinkHub>
     {
         public async Task<LinkModel> GetLink(int id)
         {
@@ -61,16 +60,13 @@ namespace LinkLogger.Controllers.Api
                 // TODO: log
                 if (rowsAdded != 1) throw new HttpResponseException(HttpStatusCode.InternalServerError);
 
-                //var response = new LinkResponse()
-                //               {
-                //                   Id = link.Id
-                //               };
+                Hub.Clients.All.addNewLink(MapLinkToLinkModel(link));
 
                 return Url.Link("DefaultApi", new {controller = "links", id = link.Id});
             }
         }
 
-        private LinkModel MapLinkToLinkModel(Link arg)
+        private static LinkModel MapLinkToLinkModel(Link arg)
         {
             return new LinkModel()
                    {
@@ -81,21 +77,5 @@ namespace LinkLogger.Controllers.Api
                        Url = arg.Url
                    };
         }
-    }
-
-    public class LinkModel
-    {
-        public int? Id { get; set; }
-        
-        [Required]
-        public string Url { get; set; }
-        
-        [Required]
-        public string User { get; set; }
-        
-        [Required]
-        public string Channel { get; set; }
-        
-        public System.DateTime? PostedAt { get; set; }
     }
 }
