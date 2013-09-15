@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
-using System.Management.Instrumentation;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
-using System.Web.Http.ModelBinding;
 using LinkLogger.DataAccess;
-using Microsoft.Ajax.Utilities;
 
-namespace LinkLogger.Api
+namespace LinkLogger.Controllers.Api
 {
     public class LinksController : ApiController
     {

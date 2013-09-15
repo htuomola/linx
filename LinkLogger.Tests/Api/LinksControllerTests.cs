@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using LinkLogger.Api;
+using LinkLogger.Controllers.Api;
 using LinkLogger.DataAccess;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
