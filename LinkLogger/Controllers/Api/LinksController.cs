@@ -5,10 +5,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using LinkLogger.DataAccess;
 using LinkLogger.Hubs;
 using LinkLogger.Models;
+using AuthorizeAttribute = System.Web.Mvc.AuthorizeAttribute;
 
 namespace LinkLogger.Controllers.Api
 {

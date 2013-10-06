@@ -5,7 +5,7 @@ namespace LinkLogger.DataAccess
     public class LinkLoggerContext : DbContext
     {
         public LinkLoggerContext()
-            : base("name=LinkLoggerContext")
+            : base("name=DefaultConnection")
         {
         }
 

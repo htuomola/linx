@@ -9,6 +9,7 @@ using LinkLogger.DataAccess;
 
 namespace LinkLogger.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         public async Task<ViewResult> Index()
