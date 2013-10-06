@@ -43,7 +43,7 @@ namespace LinkLogger.Controllers.Api.Tests
             var request = new LinkModel()
                                   {
                                       Channel = "#foobar",
-                                      Url = "http://www.sample.invalid",
+                                      Url = "http://mnd.fi/",
                                       User = "Tom"
                                   };
             string response = await controller.PostLink(request);

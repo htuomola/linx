@@ -49,6 +49,13 @@ namespace LinkLogger.Controllers.Api
                 throw new HttpResponseException(msg);
             }
 
+            bool isImage = HtmlHelpers.IsImage(model.Url);
+            
+            if (string.IsNullOrEmpty(model.Title) && !isImage)
+            {
+                model.Title = await HtmlHelpers.FetchTitle(model.Url);
+            }
+
             using (var context = new LinkLoggerContext())
             {
                 var link = MapLinkModelToLink(model);
