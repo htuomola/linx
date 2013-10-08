@@ -1,0 +1,46 @@
+﻿@model LinkLogger.Models.EditRoleMembersViewModel
+
+@{
+    ViewBag.Title = "Edit role: " + @Model.RoleName;
+}
+
+<h2>@ViewBag.Title</h2>
+
+<h3>Current members</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <td>Name</td>
+            <td>Actions</td>
+        </tr>
+    </thead>
+    @foreach (var user in Model.CurrentMembers)
+    {
+        <tr>
+            <td>@user.UserName</td>
+            <td>RemoveUserFromRole</td>
+        </tr>
+    }
+</table>
+
+<h3>Add users</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <td>Name</td>
+            <td>Actions</td>
+        </tr>
+    </thead>
+    @foreach (var user in Model.AvailableUsers)
+    {
+        <tr>
+            <td>@user.UserName</td>
+            @using (Html.BeginForm("AddUserToRole", "Roles", FormMethod.Post))
+            {
+                @Html.HiddenFor(model => user.Id, new { @Name = "UserId" })
+                @Html.HiddenFor(model => model.RoleId)
+                <td><input type="submit" value="Add"/></td>
+            }
+        </tr>
+    }
+</table>

@@ -9,9 +9,10 @@ using LinkLogger.DataAccess;
 
 namespace LinkLogger.Controllers
 {
-    [Authorize]
+    [Authorize()]
     public class HomeController : Controller
     {
+        [RoleFilter("LinkViewer")]
         public async Task<ViewResult> Index()
         {
             Link[] links;
@@ -24,6 +25,11 @@ namespace LinkLogger.Controllers
         }
 
         public ActionResult About()
+        {
+            return View();
+        }
+
+        public ActionResult RoleMissing()
         {
             return View();
         }

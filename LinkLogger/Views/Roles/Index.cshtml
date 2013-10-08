@@ -1,0 +1,23 @@
+﻿@model IEnumerable<LinkLogger.Models.RoleViewModel>
+
+@{
+    ViewBag.Title = "Roles";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>Name</td>
+            <td>Actions</td>
+        </tr>
+    </thead>
+    @foreach (var role in Model)
+    {
+        <tr>
+            <td>@role.Name</td>
+            <td>@Html.ActionLink("Edit members", "EditMembers", new {id = @role.Id }, new { @class = "btn" })</td>
+        </tr>
+    }
+</table>
