@@ -29,7 +29,7 @@ namespace LinkLogger.Controllers
             return View();
         }
 
-        public ActionResult RoleMissing()
+        public ActionResult AccessDenied()
         {
             return View();
         }

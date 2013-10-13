@@ -10,6 +10,8 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace LinkLogger.Controllers
 {
+    [Authorize]
+    [RoleFilter("Admin")]
     public class RolesController : Controller
     {
         public async Task<ActionResult> Index()

@@ -15,7 +15,7 @@ namespace LinkLogger.Controllers
             filterContext.Result = new RedirectToRouteResult(
                 new RouteValueDictionary
                 {
-                    {"action", "RoleMissing"},
+                    {"action", "AccessDenied"},
                     {"controller", "Home"}
                 });
         }
