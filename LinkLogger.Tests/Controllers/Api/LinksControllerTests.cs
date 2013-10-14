@@ -10,6 +10,7 @@ using System.Web.Http.Routing;
 using LinkLogger.DataAccess;
 using LinkLogger.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace LinkLogger.Controllers.Api.Tests
 {
@@ -35,10 +36,15 @@ namespace LinkLogger.Controllers.Api.Tests
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, "http://localhost/api/links");
             var route = config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}");
             var routeData = new HttpRouteData(route, new HttpRouteValueDictionary { { "controller", "links" } });
-            
-            var controller = new LinksController();
+
+            var mockSettings = new Mock<IApplicationSettings>(MockBehavior.Strict);
+            const string accessToken = "foo";
+            mockSettings.Setup(m => m.PostLinkAccessToken).Returns(accessToken);
+
+            var controller = new LinksController(mockSettings.Object);
             controller.ControllerContext = new HttpControllerContext(config, routeData, httpRequest);
             controller.Request.Properties[HttpPropertyKeys.HttpConfigurationKey] = config;
+            controller.Request.Headers.Add("Linx-Access-Token", accessToken);
 
             var request = new LinkModel()
                                   {
@@ -46,15 +52,18 @@ namespace LinkLogger.Controllers.Api.Tests
                                       Url = "http://mnd.fi/",
                                       User = "Tom"
                                   };
-            string response = await controller.PostLink(request);
-            Assert.IsNotNull(response);
-            Assert.IsTrue(Uri.IsWellFormedUriString(response, UriKind.Absolute));
+            var response = await controller.PostLink(request);
+            var jsonResult = response as System.Web.Mvc.JsonResult;
+            var actual = jsonResult.Data as LinkModel;
+            Assert.IsNotNull(actual);
+            Assert.IsNotNull(actual.Id);
         }
 
         [TestMethod()]
         public async Task GetListOfLinks_NoLinks_Empty()
         {
-            var controller = new LinksController();
+            var mockSettings = new Mock<IApplicationSettings>(MockBehavior.Strict);
+            var controller = new LinksController(mockSettings.Object);
             IEnumerable<LinkModel> links = await controller.GetLinks();
             Assert.IsFalse(links.Any());
         }
@@ -76,7 +85,8 @@ namespace LinkLogger.Controllers.Api.Tests
                 await ctx.SaveChangesAsync();
             }
 
-            var controller = new LinksController();
+            var mockSettings = new Mock<IApplicationSettings>(MockBehavior.Strict);
+            var controller = new LinksController(mockSettings.Object);
             IEnumerable<LinkModel> links = await controller.GetLinks();
             
             Assert.AreEqual(1, links.Count());

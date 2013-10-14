@@ -181,6 +181,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\LinkHub.cs" />
+    <Compile Include="IApplicationSettings.cs" />
     <Compile Include="Migrations\201309151417059_TitleAddedEtc.cs" />
     <Compile Include="Migrations\201309151417059_TitleAddedEtc.Designer.cs">
       <DependentUpon>201309151417059_TitleAddedEtc.cs</DependentUpon>
@@ -194,6 +195,7 @@
     <Compile Include="Models\UserViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="WebConfigApplicationSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-responsive.css" />

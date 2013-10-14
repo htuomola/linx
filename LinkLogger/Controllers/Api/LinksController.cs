@@ -7,15 +7,27 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.Mvc;
 using LinkLogger.DataAccess;
 using LinkLogger.Hubs;
 using LinkLogger.Models;
-using AuthorizeAttribute = System.Web.Mvc.AuthorizeAttribute;
 
 namespace LinkLogger.Controllers.Api
 {
+    [System.Web.Http.Authorize(Roles = "LinkViewer")]
     public class LinksController : ApiControllerWithHub<LinkHub>
     {
+        private readonly IApplicationSettings _appSettings;
+
+        public LinksController() : this(new WebConfigApplicationSettings())
+        {
+        }
+
+        public LinksController(IApplicationSettings appSettings)
+        {
+            _appSettings = appSettings;
+        }
+
         public async Task<LinkModel> GetLink(int id)
         {
             using (var context = new LinkLoggerContext())
@@ -34,8 +46,22 @@ namespace LinkLogger.Controllers.Api
             }
         }
 
-        public async Task<string> PostLink(LinkModel model)
+        [System.Web.Http.AllowAnonymous]
+        public async Task<ActionResult> PostLink(LinkModel model)
         {
+            if (!Request.Headers.Contains("Linx-Access-Token"))
+            {
+                return new HttpUnauthorizedResult("Access token missing.");
+            }
+
+            IEnumerable<string> accessTokenHeaderValues = Request.Headers.GetValues("Linx-Access-Token");
+            string accessToken = accessTokenHeaderValues.FirstOrDefault();
+
+            if (accessToken != _appSettings.PostLinkAccessToken)
+            {
+                return new HttpUnauthorizedResult("Invalid access token.");
+            }
+            
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.SelectMany(s => s.Value.Errors).Select(err => err.Exception.Message);
@@ -65,8 +91,8 @@ namespace LinkLogger.Controllers.Api
                 if (rowsAdded != 1) throw new HttpResponseException(HttpStatusCode.InternalServerError);
 
                 Hub.Clients.All.addNewLink(MapLinkToLinkModel(link));
-
-                return Url.Link("DefaultApi", new {controller = "links", id = link.Id});
+                model.Id = link.Id;
+                return new JsonResult() { Data = model };
             }
         }
 
