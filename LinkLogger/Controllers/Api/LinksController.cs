@@ -92,6 +92,7 @@ namespace LinkLogger.Controllers.Api
 
                 Hub.Clients.All.addNewLink(MapLinkToLinkModel(link));
                 model.Id = link.Id;
+                model.PostedAt = link.RegisteredAt;
                 return new JsonResult() { Data = model };
             }
         }

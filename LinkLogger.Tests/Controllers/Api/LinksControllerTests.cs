@@ -57,6 +57,7 @@ namespace LinkLogger.Controllers.Api.Tests
             var actual = jsonResult.Data as LinkModel;
             Assert.IsNotNull(actual);
             Assert.IsNotNull(actual.Id);
+            Assert.IsNotNull(actual.PostedAt);
         }
 
         [TestMethod()]
