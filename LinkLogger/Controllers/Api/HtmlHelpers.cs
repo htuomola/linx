@@ -25,15 +25,17 @@ namespace LinkLogger.Controllers.Api
 
                     string title;
 
-                    var ogTitleElement = htmlDoc.DocumentNode.SelectSingleNode("/html/head/meta[@property='og:title']");
-                    if (ogTitleElement != null)
-                    {
-                        title = ogTitleElement.GetAttributeValue("content", null);
+                    var headNode = htmlDoc.DocumentNode.ChildNodes.FindFirst("head");
+                    var ogTitleNode = headNode.SelectSingleNode("meta[@property='og:title']");
 
+                    if (ogTitleNode != null)
+                    {
+                        title = ogTitleNode.GetAttributeValue("content", null);
                     }
                     else
                     {
-                        var titleElement = htmlDoc.DocumentNode.SelectSingleNode("/html/head/title");
+                        var titleElement = headNode.SelectSingleNode("title");
+                        if (titleElement == null) return null;
                         title = titleElement.InnerText;
                     }
 

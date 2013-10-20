@@ -29,6 +29,15 @@ namespace LinkLogger.Controllers.Api.Tests
         }
 
         [TestMethod()]
+        public async Task FetchTitle_TextPage3_Success()
+        {
+            string expected = "Huonosti menestyvän yhtiön osakkeita ostettiin suuri määrä";
+            var url = "http://lehtilehti.fi/2013/09/huonosti-menestyvan-yhtion-osakkeita-ostettiin-suuri-maara/";
+            string actual = await HtmlHelpers.FetchTitle(url);
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod()]
         public void IsImage_TextPage_False()
         {
             var url = "http://www.hs.fi/kotimaa/Jokerikone+ysk%C3%A4hteli+MTV3n+ensimm%C3%A4isess%C3%A4+lottoarvonnassa/a1305727779361";
