@@ -29,8 +29,9 @@ namespace LinkLogger.Controllers
             return View();
         }
 
-        public ActionResult AccessDenied()
+        public ActionResult AccessDenied(string id)
         {
+            ViewBag.MissingRoleName = id;
             return View();
         }
     }
