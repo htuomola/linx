@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using LinkLogger.Controllers;
 using LinkLogger.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Should;
 
@@ -16,13 +14,13 @@ namespace LinkLogger.Tests.Controllers
     [TestClass]
     public class RolesControllerTests
     {
-        private AuthenticationIdentityManager _identityManager;
-        private CancellationTokenSource _cts;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RolesControllerTests()
         {
-            _identityManager = new AuthenticationIdentityManager(new IdentityStore());
-            _cts = new CancellationTokenSource();
+            _userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+            _roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new ApplicationDbContext()));
         }
 
         [TestInitialize]
@@ -30,12 +28,17 @@ namespace LinkLogger.Tests.Controllers
         {
             using (var ctx = new ApplicationDbContext())
             {
-                ctx.Database.ExecuteSqlCommand("delete from dbo.AspNetUserManagement");
-                ctx.UserRoles.RemoveRange(ctx.UserRoles.ToArray());
-                ctx.Users.RemoveRange(ctx.Users.ToArray());
+                //ctx.Database.ExecuteSqlCommand("delete from dbo.AspNetUserManagement");
+                foreach (var user in ctx.Users.ToArray())
+                {
+                    ctx.Users.Remove(user);
+                }
 
-                var roles = ctx.Roles.ToArray();
-                ctx.Roles.RemoveRange(roles);
+                foreach (var role in ctx.Roles.ToArray())
+                {
+                    ctx.Roles.Remove(role);
+                }
+
                 ctx.SaveChanges();
             }
         }
@@ -57,11 +60,9 @@ namespace LinkLogger.Tests.Controllers
         [TestMethod]
         public async Task ListRoles_1Role_Ok()
         {
-            var targetRole = new Role("testing");
-            await CreateRole(targetRole);
-
-            await _identityManager.SaveChangesAsync(_cts.Token);
-
+            var targetRole = new IdentityRole("testing");
+            await _roleManager.CreateAsync(targetRole);
+            
             var target = new RolesController();
             var actual = (ViewResult)(await target.Index());
             var roles = actual.Model as IEnumerable<RoleViewModel>;
@@ -76,11 +77,9 @@ namespace LinkLogger.Tests.Controllers
         [TestMethod]
         public async Task EditMembers_NoMembers_Ok()
         {
-            var targetRole = new Role("testing");
-            await CreateRole(targetRole);
-
-            await _identityManager.SaveChangesAsync(_cts.Token);
-
+            var targetRole = new IdentityRole("testing");
+            await _roleManager.CreateAsync(targetRole);
+            
             var target = new RolesController();
             var actual = await target.EditMembers(targetRole.Id) as ViewResult;
             actual.ShouldNotBeNull();
@@ -93,15 +92,14 @@ namespace LinkLogger.Tests.Controllers
         [TestMethod]
         public async Task EditMembers_1Member_Ok()
         {
-            var role = new Role("testing");
-            await CreateRole(role);
+            var role = new IdentityRole("testing");
+            await _roleManager.CreateAsync(role);
 
-            var user = new User("tester");
-            await CreateUser(user);
-            var identityResult = await _identityManager.Roles.AddUserToRoleAsync(user.Id, role.Id);
-            identityResult.Success.ShouldBeTrue();
-
-            await _identityManager.SaveChangesAsync(_cts.Token);
+            var user = new ApplicationUser() { UserName = "tester" };
+            await _userManager.CreateAsync(user);
+            
+            var identityResult = await _userManager.AddToRoleAsync(user.Id, role.Id);
+            identityResult.Succeeded.ShouldBeTrue();
 
             var target = new RolesController();
             var actual = await target.EditMembers(role.Id) as ViewResult;
@@ -115,13 +113,11 @@ namespace LinkLogger.Tests.Controllers
         [TestMethod]
         public async Task EditMembers_1User_NotMember_Ok()
         {
-            var targetRole = new Role("testing");
-            await CreateRole(targetRole);
+            var targetRole = new IdentityRole("testing");
+            await _roleManager.CreateAsync(targetRole);
 
-            var user = new User("tester");
-            await CreateUser(user);
-
-            await _identityManager.SaveChangesAsync(_cts.Token);
+            var user = new ApplicationUser(){ UserName = "tester"};
+            await _userManager.CreateAsync(user);
 
             var target = new RolesController();
             var actual = await target.EditMembers(targetRole.Id) as ViewResult;
@@ -130,18 +126,6 @@ namespace LinkLogger.Tests.Controllers
             model.ShouldNotBeNull();
             model.AvailableUsers.Count().ShouldEqual(1);
             model.CurrentMembers.ShouldNotBeNull().ShouldBeEmpty();
-        }
-
-        private async Task CreateUser(User user)
-        {
-            var identityResult = await _identityManager.Users.CreateUserAsync(user, _cts.Token);
-            identityResult.Success.ShouldBeTrue();
-        }
-
-        private async Task CreateRole(Role targetRole)
-        {
-            IdentityResult identityResult = await _identityManager.Roles.CreateRoleAsync(targetRole, _cts.Token);
-            identityResult.Success.ShouldBeTrue();
         }
     }
 

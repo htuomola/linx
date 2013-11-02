@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using LinkLogger.Models;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 
@@ -16,7 +17,7 @@ namespace LinkLogger.Controllers
     {
         public async Task<ActionResult> Index()
         {
-            Role[] roles;
+            IdentityRole[] roles;
             using (var ctx = new ApplicationDbContext())
             {
                 roles = await ctx.Roles.ToArrayAsync();
@@ -32,8 +33,9 @@ namespace LinkLogger.Controllers
             {
                 using (var ctx = new ApplicationDbContext())
                 {
-                    var role = await ctx.Roles.FindAsync(id);
-                    var currentMembers = role.UserRoles.Select(ur => ur.User).ToArray();
+                    var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(ctx));
+                    IdentityRole role = await roleManager.FindByIdAsync(id);
+                    var currentMembers = await ctx.Users.Where(user => user.Roles.Select(r => r.RoleId).Contains(id)).ToArrayAsync();
                     var currentMemberIds = currentMembers.Select(u => u.Id);
 
                     var availableUsers = await ctx.Users.Where(u => !currentMemberIds.Contains(u.Id)).ToArrayAsync();
@@ -56,12 +58,12 @@ namespace LinkLogger.Controllers
             }
         }
 
-        private static RoleViewModel MapDbRoleToRoleVm(Role arg)
+        private static RoleViewModel MapDbRoleToRoleVm(IdentityRole arg)
         {
             return new RoleViewModel() {Name = arg.Name, Id = arg.Id};
         }
 
-        private static UserViewModel MapDbUserToUserViewModel(User u)
+        private static UserViewModel MapDbUserToUserViewModel(IdentityUser u)
         {
             return new UserViewModel {Id = u.Id, UserName = u.UserName};
         }
@@ -71,13 +73,13 @@ namespace LinkLogger.Controllers
         {
             if (ModelState.IsValid)
             {
-                var identityManager = new AuthenticationIdentityManager(new IdentityStore());
+                var identityManager =
+                    new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
                 var cts = new CancellationTokenSource();
-                var identityResult = await identityManager.Roles.AddUserToRoleAsync(model.UserId, model.RoleId, cts.Token);
+                var identityResult = await identityManager.AddToRoleAsync(model.UserId, model.RoleId);
                 
-                if (identityResult.Success)
+                if (identityResult.Succeeded)
                 {
-                    await identityManager.SaveChangesAsync(cts.Token);
                     TempData["Message"] = "User added to role succesfully";
                 }
                 else
