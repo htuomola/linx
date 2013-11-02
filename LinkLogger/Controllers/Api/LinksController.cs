@@ -30,7 +30,7 @@ namespace LinkLogger.Controllers.Api
 
         public async Task<LinkModel> GetLink(int id)
         {
-            using (var context = new LinkLoggerContext())
+            using (var context = new ApplicationDbContext())
             {
                 Link link = await context.Links.FindAsync(id);
                 return MapLinkToLinkModel(link);
@@ -39,7 +39,7 @@ namespace LinkLogger.Controllers.Api
 
         public async Task<IEnumerable<LinkModel>> GetLinks()
         {
-            using (var context = new LinkLoggerContext())
+            using (var context = new ApplicationDbContext())
             {
                 var links = await context.Links.OrderByDescending(l => l.RegisteredAt).Take(10).ToArrayAsync();
                 return links.Select(MapLinkToLinkModel);
@@ -82,7 +82,7 @@ namespace LinkLogger.Controllers.Api
                 model.Title = await HtmlHelpers.FetchTitle(model.Url);
             }
 
-            using (var context = new LinkLoggerContext())
+            using (var context = new ApplicationDbContext())
             {
                 var link = MapLinkModelToLink(model);
                 context.Links.Add(link);

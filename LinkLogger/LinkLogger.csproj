@@ -193,8 +193,9 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RoleFilterAttribute.cs" />
     <Compile Include="Controllers\RolesController.cs" />
+    <Compile Include="DataAccess\ApplicationDbContext.cs" />
+    <Compile Include="DataAccess\ApplicationUser.cs" />
     <Compile Include="DataAccess\Link.cs" />
-    <Compile Include="DataAccess\LinkLoggerContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -204,10 +205,14 @@
     <Compile Include="Migrations\201309151417059_TitleAddedEtc.Designer.cs">
       <DependentUpon>201309151417059_TitleAddedEtc.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311021319265_UserAndDataContextCombined_Mvc5Rtm.cs" />
+    <Compile Include="Migrations\201311021319265_UserAndDataContextCombined_Mvc5Rtm.Designer.cs">
+      <DependentUpon>201311021319265_UserAndDataContextCombined_Mvc5Rtm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AddUserToRoleViewModel.cs" />
-    <Compile Include="Models\ApplicationDbContext.cs" />
+    <Compile Include="Models\EditRoleMembersViewModel.cs" />
     <Compile Include="Models\LinkModel.cs" />
     <Compile Include="Models\RoleViewModel.cs" />
     <Compile Include="Models\UserViewModel.cs" />
@@ -285,6 +290,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201309151417059_TitleAddedEtc.resx">
       <DependentUpon>201309151417059_TitleAddedEtc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311021319265_UserAndDataContextCombined_Mvc5Rtm.resx">
+      <DependentUpon>201311021319265_UserAndDataContextCombined_Mvc5Rtm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

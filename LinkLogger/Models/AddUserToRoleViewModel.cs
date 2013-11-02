@@ -5,7 +5,7 @@ namespace LinkLogger.Models
     public class AddUserToRoleViewModel
     {
         [Required]
-        public string RoleId { get; set; }
+        public string RoleName { get; set; }
 
         [Required]
         public string UserId { get; set; }

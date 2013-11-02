@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace LinkLogger.Models
 {
@@ -9,14 +8,5 @@ namespace LinkLogger.Models
 
         [DisplayName("User name")]
         public string UserName { get; set; }
-    }
-
-    public class EditRoleMembersViewModel
-    {
-        public IEnumerable<UserViewModel> CurrentMembers { get; set; }
-
-        public IEnumerable<UserViewModel> AvailableUsers { get; set; }
-        public string RoleName { get; set; }
-        public string RoleId { get; set; }
     }
 }

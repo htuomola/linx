@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using LinkLogger.DataAccess;
+using LinkLogger.Models;
 
 namespace LinkLogger.Controllers
 {
@@ -16,7 +17,7 @@ namespace LinkLogger.Controllers
         public async Task<ViewResult> Index()
         {
             Link[] links;
-            using (var ctx = new LinkLoggerContext())
+            using (var ctx = new ApplicationDbContext())
             {
                 links = await ctx.Links.OrderByDescending(l => l.RegisteredAt).Take(20).ToArrayAsync();
             }

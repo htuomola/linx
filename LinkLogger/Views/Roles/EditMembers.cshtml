@@ -38,7 +38,7 @@
             @using (Html.BeginForm("AddUserToRole", "Roles", FormMethod.Post))
             {
                 @Html.HiddenFor(model => user.Id, new { @Name = "UserId" })
-                @Html.HiddenFor(model => model.RoleId)
+                @Html.HiddenFor(model => model.RoleName)
                 <td><input type="submit" value="Add"/></td>
             }
         </tr>

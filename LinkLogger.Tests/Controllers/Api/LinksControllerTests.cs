@@ -80,7 +80,7 @@ namespace LinkLogger.Controllers.Api.Tests
                                RegisteredAt = DateTime.Now
                            };
 
-            using (var ctx = new LinkLoggerContext())
+            using (var ctx = new ApplicationDbContext())
             {
                 ctx.Links.Add(expected);
                 await ctx.SaveChangesAsync();
@@ -104,7 +104,7 @@ namespace LinkLogger.Controllers.Api.Tests
 
         private static void EmptyDatabase()
         {
-            using (var ctx = new LinkLoggerContext())
+            using (var ctx = new ApplicationDbContext())
             {
                 var links = ctx.Links.ToList();
                 if (!links.Any()) return;

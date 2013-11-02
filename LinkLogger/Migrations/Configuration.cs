@@ -1,31 +1,35 @@
+using System.Data.Entity.Migrations;
+using System.Threading.Tasks;
+using LinkLogger.DataAccess;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+
 namespace LinkLogger.Migrations
 {
-    using System;
-    using System.Data.Entity;
-    using System.Data.Entity.Migrations;
-    using System.Linq;
-
-    internal sealed class Configuration : DbMigrationsConfiguration<LinkLogger.DataAccess.LinkLoggerContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
     {
+        private const string AdminRoleName = "Admin";
+
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(LinkLogger.DataAccess.LinkLoggerContext context)
+        protected override void Seed(ApplicationDbContext context)
         {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            context.Roles.AddOrUpdate(r => r.Name, 
+                new IdentityRole("LinkViewer"),
+                new IdentityRole(AdminRoleName));
+            
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+            ApplicationUser adminUser = userManager.FindByName("Admin");
+            if (adminUser == null)
+            {
+                var applicationUser = new ApplicationUser() { UserName = "Admin" };
+                IdentityResult identityResultResult = userManager.Create(applicationUser);
+                IdentityResult addPasswordResult = userManager.AddPassword(applicationUser.Id, "R4ndomP4ssHere23432!");
+                IdentityResult addToRoleResult = userManager.AddToRole(applicationUser.Id, AdminRoleName);
+            }
         }
     }
 }
