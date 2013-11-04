@@ -21,15 +21,18 @@ namespace LinkLogger.Migrations
                 new IdentityRole("LinkViewer"),
                 new IdentityRole(AdminRoleName));
             
-            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
-            ApplicationUser adminUser = userManager.FindByName("Admin");
-            if (adminUser == null)
-            {
-                var applicationUser = new ApplicationUser() { UserName = "Admin" };
-                IdentityResult identityResultResult = userManager.Create(applicationUser);
-                IdentityResult addPasswordResult = userManager.AddPassword(applicationUser.Id, "R4ndomP4ssHere23432!");
-                IdentityResult addToRoleResult = userManager.AddToRole(applicationUser.Id, AdminRoleName);
-            }
+            /* Uncomment the following to have the database automatically seeded with admin account.
+             * Do remember to change the password at first start!
+             */
+            //var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+            //ApplicationUser adminUser = userManager.FindByName("Admin");
+            //if (adminUser == null)
+            //{
+            //    var applicationUser = new ApplicationUser() { UserName = "Admin" };
+            //    IdentityResult identityResultResult = userManager.Create(applicationUser);
+            //    IdentityResult addPasswordResult = userManager.AddPassword(applicationUser.Id, "R4ndomP4ssHere23432!");
+            //    IdentityResult addToRoleResult = userManager.AddToRole(applicationUser.Id, AdminRoleName);
+            //}
         }
     }
 }
