@@ -14,7 +14,7 @@ using LinkLogger.Models;
 
 namespace LinkLogger.Controllers.Api
 {
-    [System.Web.Http.Authorize(Roles = "LinkViewer")]
+    [RoleFilter("LinkViewer")]
     public class LinksController : ApiControllerWithHub<LinkHub>
     {
         private readonly IApplicationSettings _appSettings;

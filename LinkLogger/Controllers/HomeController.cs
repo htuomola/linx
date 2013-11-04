@@ -9,13 +9,7 @@ namespace LinkLogger.Controllers
         [RoleFilter("LinkViewer")]
         public async Task<ViewResult> Index()
         {
-            Link[] links;
-            using (var ctx = new ApplicationDbContext())
-            {
-                links = await ctx.Links.OrderByDescending(l => l.RegisteredAt).Take(20).ToArrayAsync();
-            }
-
-            return View(links);
+            return View();
         }
 
         public ActionResult About()
