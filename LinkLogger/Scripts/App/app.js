@@ -11,7 +11,7 @@ function LinkViewModel(app, model) {
 
     self.url = model.Url;
     self.urlText = model.Url.substring(0, 20) + '...';
-    self.postedAt = model.PostedAt;
+    self.postedAt = moment(model.PostedAt).fromNow();
     self.channel = model.Channel;
     self.user = model.User;
     self.id = model.Id;

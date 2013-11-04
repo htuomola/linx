@@ -23,7 +23,7 @@
     <tbody data-bind="foreach: links">
         <tr>
             <td><span data-bind="text: title"> </span></td>
-            <td><a data-bind="attr: {href: url}, text: urlText" target="_blank"></a></td>
+            <td><a data-bind="attr: {href: url, title: url}, text: urlText" target="_blank"></a></td>
             <td><span data-bind="text: user"> </span></td>
             <td><span data-bind="text: channel"> </span></td>
             <td><span data-bind="text: postedAt"> </span></td>
