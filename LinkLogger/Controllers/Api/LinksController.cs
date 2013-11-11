@@ -14,6 +14,10 @@ using LinkLogger.Models;
 
 namespace LinkLogger.Controllers.Api
 {
+    /// <summary>
+    /// LinksController is used as the main API endpoint for querying link data
+    /// and posting info on new links.
+    /// </summary>
     [RoleFilter("LinkViewer")]
     public class LinksController : ApiControllerWithHub<LinkHub>
     {
@@ -28,6 +32,11 @@ namespace LinkLogger.Controllers.Api
             _appSettings = appSettings;
         }
 
+        /// <summary>
+        /// Get a specific link
+        /// </summary>
+        /// <param name="id">Link id</param>
+        /// <returns></returns>
         public async Task<LinkModel> GetLink(int id)
         {
             using (var context = new ApplicationDbContext())
