@@ -50,7 +50,16 @@ namespace LinkLogger.Controllers.Api
         {
             using (var context = new ApplicationDbContext())
             {
-                var links = await context.Links.OrderByDescending(l => l.RegisteredAt).Take(10).ToArrayAsync();
+                var links = await context.Links.OrderByDescending(l => l.RegisteredAt).Take(20).ToArrayAsync();
+                return links.Select(MapLinkToLinkModel);
+            }
+        }
+
+        public async Task<IEnumerable<LinkModel>> GetLinksOlderThan(int id)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var links = await context.Links.Where(l => l.Id < id).OrderByDescending(l => l.RegisteredAt).Take(10).ToArrayAsync();
                 return links.Select(MapLinkToLinkModel);
             }
         }
