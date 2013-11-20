@@ -1,8 +1,6 @@
-﻿
-
-$(function () {
-    app.init();
+﻿$(function () {
+    linkApp.init();
 
     // Activate Knockout
-    ko.applyBindings(app);
+    ko.applyBindings(linkApp);
 });

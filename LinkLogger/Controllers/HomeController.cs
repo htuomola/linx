@@ -7,7 +7,7 @@ namespace LinkLogger.Controllers
     public class HomeController : Controller
     {
         [RoleFilter("LinkViewer")]
-        public async Task<ViewResult> Index()
+        public ViewResult Index()
         {
             return View();
         }

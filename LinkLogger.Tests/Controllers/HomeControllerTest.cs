@@ -14,13 +14,13 @@ namespace LinkLogger.Tests.Controllers
     public class HomeControllerTest
     {
         [TestMethod]
-        public async Task Index()
+        public void Index()
         {
             // Arrange
             HomeController controller = new HomeController();
 
             // Act
-            ViewResult result = await controller.Index();
+            ViewResult result = controller.Index();
 
             // Assert
             Assert.IsNotNull(result);

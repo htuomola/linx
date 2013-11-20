@@ -1,44 +1,51 @@
-﻿function AppDataModel() {
-    var self = this;
+///<reference path="../typings/jquery/jquery.d.ts" />
+///<reference path="../typings/signalr/signalr.d.ts" />
+///<reference path="../typings/MySignalRHubs.d.ts" />
+var LinkApp;
+(function (LinkApp) {
+    var AppDataModel = (function () {
+        function AppDataModel() {
+        }
+        AppDataModel.prototype.getLinks = function () {
+            return $.ajax("/api/links/getlinks");
+        };
 
-    self.getLinks = function () {
-        return $.ajax("/api/links/getlinks");
-    };
+        AppDataModel.prototype.getMoreLinks = function (oldestLoadedId) {
+            return $.ajax("/api/links/getLinksOlderThan/" + oldestLoadedId);
+        };
+        return AppDataModel;
+    })();
+    LinkApp.AppDataModel = AppDataModel;
 
-    self.getMoreLinks = function (oldestLoadedId) {
-        return $.ajax("/api/links/getLinksOlderThan/" + oldestLoadedId);
-    };
-}
+    var LinkViewModel = (function () {
+        function LinkViewModel(app, model) {
+            this.url = model.Url;
+            this.urlText = model.Url.substring(0, 20) + '...';
+            this.postedAt = moment.utc(model.PostedAt).fromNow();
+            this.channel = model.Channel;
+            this.user = model.User;
+            this.id = model.Id;
+            this.title = model.Title;
+        }
+        return LinkViewModel;
+    })();
+    LinkApp.LinkViewModel = LinkViewModel;
 
-function LinkViewModel(app, model) {
-    var self = this;
-
-    self.url = model.Url;
-    self.urlText = model.Url.substring(0, 20) + '...';
-    self.postedAt = moment.utc(model.PostedAt).fromNow();
-    self.channel = model.Channel;
-    self.user = model.User;
-    self.id = model.Id;
-    self.title = model.Title;
-}
-
-function AppViewModel(dataModel) {
-    var self = this;
-
-    self.links = ko.observableArray();
-
-    self.loadingLinks = ko.observable(false);
-    
-    self.loadingMoreLinks = ko.observable(false);
-    self.hasMoreItems = ko.observable(true);
-    
-    self.init = function () {
-        self.loadingLinks(true);
-        dataModel.getLinks()
-            .done(function (data) {
+    var AppViewModel = (function () {
+        function AppViewModel(dataModel) {
+            this.links = ko.observableArray();
+            this.loadingLinks = ko.observable(false);
+            this.loadingMoreLinks = ko.observable(false);
+            this.hasMoreItems = ko.observable(true);
+            this.dataModel = dataModel;
+        }
+        AppViewModel.prototype.init = function () {
+            this.loadingLinks(true);
+            var self = this;
+            this.dataModel.getLinks().done(function (data) {
                 if (typeof (data) === "object") {
                     for (var i = 0; i < data.length; i++) {
-                        self.links.push(new LinkViewModel(app, data[i]));
+                        self.links.push(new LinkViewModel(self, data[i]));
                     }
                     var initialPageSize = 20;
                     self.hasMoreItems(data.length == initialPageSize);
@@ -46,25 +53,23 @@ function AppViewModel(dataModel) {
                     //self.errors.push("An unknown error occurred.");
                     // TODO: notify error
                 }
-            })
-            .fail(function () {
+            }).fail(function () {
                 // TODO: notify error
             });
-        self.loadingLinks(false);
-    };
+            this.loadingLinks(false);
+        };
 
-    self.loadMoreItems = function() {
-        if (self.loadingLinks()) return;
-        self.loadingMoreLinks(true);
+        AppViewModel.prototype.loadMoreItems = function () {
+            if (this.loadingLinks())
+                return;
+            this.loadingMoreLinks(true);
+            var self = this;
+            var lastLoadedId = this.links()[this.links().length - 1].id;
 
-        var lastLoadedId = self.links()[self.links().length-1].id;
-        //var lastLoadedId = 10;
-
-        dataModel.getMoreLinks(lastLoadedId)
-            .done(function(data) {
-                if (typeof(data) === "object") {
+            this.dataModel.getMoreLinks(lastLoadedId).done(function (data) {
+                if (typeof (data) === "object") {
                     for (var i = 0; i < data.length; i++) {
-                        self.links.push(new LinkViewModel(app, data[i]));
+                        self.links.push(new LinkViewModel(self, data[i]));
                     }
                     var loadMoreItemsPageSize = 10;
                     self.hasMoreItems(data.length == loadMoreItemsPageSize);
@@ -72,28 +77,31 @@ function AppViewModel(dataModel) {
                     //self.errors.push("An unknown error occurred.");
                     // TODO: notify error
                 }
-            })
-            .fail(function() {
+            }).fail(function () {
                 // TODO: notify error
             });
 
-        self.loadingMoreLinks(false);
-    };
+            this.loadingMoreLinks(false);
+        };
 
-    self.linkAdded = function (link) {
-        var vm = new LinkViewModel(app, link);
-        self.links.unshift(vm);
-    };
-}
+        AppViewModel.prototype.linkAdded = function (link) {
+            var vm = new LinkViewModel(this, link);
+            this.links.unshift(vm);
+        };
+        return AppViewModel;
+    })();
+    LinkApp.AppViewModel = AppViewModel;
+})(LinkApp || (LinkApp = {}));
 
-var app = new AppViewModel(new AppDataModel());
+var linkApp = new LinkApp.AppViewModel(new LinkApp.AppDataModel());
 
 $(function () {
     // Reference the auto-generated proxy for the hub.
     var linkHub = $.connection.linkHub;
+
     // Create a function that the hub can call back for notifying of new links.
     linkHub.client.addNewLink = function (link) {
-        app.linkAdded(link);
+        linkApp.linkAdded(link);
     };
 
     // Start the connection.
@@ -105,27 +113,10 @@ $(function () {
     });
 });
 
-
 $(window).scroll(function (e) {
-    //if ($(window).data('ajaxready') == false) return;
-
     if (($(window).scrollTop() + $(window).height()) >= $(document).height() * 0.9) {
-        //$('div#loadmoreajaxloader').show();
-        //$(window).data('ajaxready', false);
-        if(app.hasMoreItems())
-            app.loadMoreItems();
-        //$.ajax({
-        //    cache: false,
-        //    url: 'loadmore.php?lastid=' + $('.postitem:last').attr('id'),
-        //    success: function (html) {
-        //        if (html) {
-        //            $('#postswrapper').append(html);
-        //            $('div#loadmoreajaxloader').hide();
-        //        } else {
-        //            $('div#loadmoreajaxloader').html();
-        //        }
-        //        $(window).data('ajaxready', true);
-        //    }
-        //});
+        if (linkApp.hasMoreItems())
+            linkApp.loadMoreItems();
     }
 });
+//# sourceMappingURL=app.js.map
