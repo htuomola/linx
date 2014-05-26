@@ -4,9 +4,9 @@
 module LinkApp {
 
     export class AppDataModel {
-        getLinks() { return $.ajax("/api/links/getlinks"); }
+        getLinks() { return $.ajax("/api/links/"); }
 
-        getMoreLinks(oldestLoadedId: number) { return $.ajax("/api/links/getLinksOlderThan/" + oldestLoadedId); }
+        getMoreLinks(oldestLoadedId: number) { return $.ajax("/api/links/before/" + oldestLoadedId); }
     }
 
     export class LinkViewModel {

@@ -7,11 +7,11 @@ var LinkApp;
         function AppDataModel() {
         }
         AppDataModel.prototype.getLinks = function () {
-            return $.ajax("/api/links/getlinks");
+            return $.ajax("/api/links/");
         };
 
         AppDataModel.prototype.getMoreLinks = function (oldestLoadedId) {
-            return $.ajax("/api/links/getLinksOlderThan/" + oldestLoadedId);
+            return $.ajax("/api/links/before/" + oldestLoadedId);
         };
         return AppDataModel;
     })();

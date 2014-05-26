@@ -5,9 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
-using System.Web.Mvc;
 using LinkLogger.DataAccess;
 using LinkLogger.Hubs;
 using LinkLogger.Models;
@@ -19,6 +17,7 @@ namespace LinkLogger.Controllers.Api
     /// and posting info on new links.
     /// </summary>
     [RoleFilter("LinkViewer")]
+    [RoutePrefix("api/links")]
     public class LinksController : ApiControllerWithHub<LinkHub>
     {
         private readonly IApplicationSettings _appSettings;
@@ -37,6 +36,7 @@ namespace LinkLogger.Controllers.Api
         /// </summary>
         /// <param name="id">Link id</param>
         /// <returns></returns>
+        [Route("{id}", Name = "GetLinkById")]
         public async Task<LinkModel> GetLink(int id)
         {
             using (var context = new ApplicationDbContext())
@@ -46,6 +46,7 @@ namespace LinkLogger.Controllers.Api
             }
         }
 
+        [Route("")]
         public async Task<IEnumerable<LinkModel>> GetLinks()
         {
             using (var context = new ApplicationDbContext())
@@ -55,6 +56,7 @@ namespace LinkLogger.Controllers.Api
             }
         }
 
+        [Route("before/{id:int}")]
         public async Task<IEnumerable<LinkModel>> GetLinksOlderThan(int id)
         {
             using (var context = new ApplicationDbContext())
@@ -64,12 +66,14 @@ namespace LinkLogger.Controllers.Api
             }
         }
 
-        [System.Web.Http.AllowAnonymous]
-        public async Task<ActionResult> PostLink(LinkModel model)
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("")]
+        public async Task<HttpResponseMessage> PostLink(LinkModel model)
         {
             if (!Request.Headers.Contains("Linx-Access-Token"))
             {
-                return new HttpUnauthorizedResult("Access token missing.");
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Access token missing.");
             }
 
             IEnumerable<string> accessTokenHeaderValues = Request.Headers.GetValues("Linx-Access-Token");
@@ -77,20 +81,19 @@ namespace LinkLogger.Controllers.Api
 
             if (accessToken != _appSettings.PostLinkAccessToken)
             {
-                return new HttpUnauthorizedResult("Invalid access token.");
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Invalid access token.");
             }
             
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.SelectMany(s => s.Value.Errors).Select(err => err.Exception.Message);
-                var msg = new HttpResponseMessage(HttpStatusCode.BadRequest)
-                          {
-                              Content =
-                                  new StringContent(
-                                  "Invalid model state: " +
-                                  string.Join(",", errors))
-                          };
-                throw new HttpResponseException(msg);
+                return new HttpResponseMessage(HttpStatusCode.BadRequest)
+                       {
+                           Content =
+                               new StringContent(
+                               "Invalid model state: " +
+                               string.Join(",", errors))
+                       };
             }
 
             bool isImage = HtmlHelpers.IsImage(model.Url);
@@ -111,7 +114,9 @@ namespace LinkLogger.Controllers.Api
                 Hub.Clients.All.addNewLink(MapLinkToLinkModel(link));
                 model.Id = link.Id;
                 model.PostedAt = link.RegisteredAt;
-                return new JsonResult() { Data = model };
+                var response = Request.CreateResponse(HttpStatusCode.Created);
+                response.Headers.Location = new Uri(Url.Link("GetLinkById", new { id = model.Id }));
+                return response;
             }
         }
 

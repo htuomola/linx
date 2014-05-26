@@ -52,12 +52,8 @@ namespace LinkLogger.Controllers.Api.Tests
                                       Url = "http://mnd.fi/",
                                       User = "Tom"
                                   };
-            var response = await controller.PostLink(request);
-            var jsonResult = response as System.Web.Mvc.JsonResult;
-            var actual = jsonResult.Data as LinkModel;
-            Assert.IsNotNull(actual);
-            Assert.IsNotNull(actual.Id);
-            Assert.IsNotNull(actual.PostedAt);
+            HttpResponseMessage response = await controller.PostLink(request);
+            Assert.IsNotNull(response.Headers.Location);
         }
 
         [TestMethod()]
