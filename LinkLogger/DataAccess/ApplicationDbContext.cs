@@ -7,7 +7,7 @@ namespace LinkLogger.DataAccess
     {
 
         public ApplicationDbContext()
-            : base("name=DefaultConnection")
+            : base("name=DefaultConnection", throwIfV1Schema: false)
         {
         }
 

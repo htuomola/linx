@@ -38,15 +38,19 @@ namespace LinkLogger.Controllers
                     {
                         // TODO: show error.
                     }
-                    var currentMembers = await ctx.Users.Where(user => user.Roles.Select(r => r.Role.Name).Contains(id)).ToArrayAsync();
-                    var currentMemberIds = currentMembers.Select(u => u.Id);
 
-                    var availableUsers = await ctx.Users.Where(u => !currentMemberIds.Contains(u.Id)).ToArrayAsync();
+                    var roleMemberIds = role.Users.Select(m => m.UserId);
+
+                    var roleMembers = from u in ctx.Users
+                        where roleMemberIds.Contains(u.Id)
+                        select u;
+
+                    var availableUsers = await ctx.Users.Where(u => !roleMemberIds.Contains(u.Id)).ToArrayAsync();
 
                     var model = new EditRoleMembersViewModel()
                                 {
-                                    AvailableUsers = availableUsers.Select(MapDbUserToUserViewModel),
-                                    CurrentMembers = currentMembers.Select(MapDbUserToUserViewModel),
+                                    AvailableUsers = availableUsers.Select(MapDbUserToUserViewModel).ToArray(),
+                                    CurrentMembers = roleMembers.Select(MapDbUserToUserViewModel).ToArray(),
                                     RoleName = role.Name,
                                     RoleId = role.Id
                                 };
