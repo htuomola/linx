@@ -36,7 +36,7 @@ module LinkApp {
         }
 
         dataModel: AppDataModel;
-        links = ko.observableArray();
+        links = ko.observableArray<LinkViewModel>();
 
         loadingLinks = ko.observable(false);
 
